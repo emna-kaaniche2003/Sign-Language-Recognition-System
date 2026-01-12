@@ -2,7 +2,7 @@
 
 ## 📌 Project Overview
 
-This project implements **real-time sign language recognition** using **MediaPipe Hands** for hand landmark detection and an **MLP (Multi-Layer Perceptron) model** for character classification. Additionally, we experimented with **MobileNetV2** for sign recognition but found that **MediaPipe-based MLP performs better in real-time scenarios**. The system captures hand gestures from a webcam, extracts landmark features, and predicts sign language letters, dynamically forming words and sentences.
+This project implements a high-performance **real-time sign language recognition** system. It leverages **MediaPipe Hands** for precise hand landmark detection and a **Multi-Layer Perceptron (MLP)** neural network for instant character classification. The system captures hand gestures from a webcam, extracts 21 geometric keypoints, and identifies ASL letters with high accuracy and minimal latency.
 
 ## 📂 Project Structure
 
@@ -12,12 +12,7 @@ This project implements **real-time sign language recognition** using **MediaPip
 │    │── 📂 Asl_Sign_Data/                       # Raw ASL dataset
 │    │── 📄 asl_mediapipe_keypoints_dataset.csv  # Preprocessed dataset for MLP model
 │    │── 📄 asl_mediapipe_mlp_model.h5           # Trained MLP model
-│    │── 📄 sign_language_model_MobileNetV2.h5   # Trained MobileNetV2 model
-│    │── 📄 Combined_Architecture.ipynb          # Hybrid model experiments
-│    │── 📄 LLM.ipynb                            # Language Model Integration
 │    │── 📄 Mediapipe_Training.ipynb             # Training script for MLP model
-│    │── 📄 MobileNetV2_Training.ipynb           # Training script for MobileNetV2
-│    │── 📄 concluion.txt                        # Summary of results
 │    │── 📄 requirements.txt                     # Required dependencies
 ```
 
@@ -25,62 +20,11 @@ This project implements **real-time sign language recognition** using **MediaPip
 
 - The dataset used for training was obtained from **Kaggle ASL Sign Language Dataset**.
 - It contains **hand gesture images labeled with ASL characters**.
-- For **MobileNetV2**, we used **raw images**.
 - For **MLP (MediaPipe)**, we extracted **landmark keypoints** from each image and stored them in CSV format.
 
 ## 📌 Model 1: MobileNetV2 Approach
 
-- We trained **MobileNetV2** on raw images for sign classification.
 - However, it struggled with **real-time sign recognition**, leading us to explore **MediaPipe-based MLP**.
-
-### **Training MobileNetV2**
-
-```python
-from tensorflow.keras.applications import MobileNetV2
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, Flatten
-
-# Load pre-trained MobileNetV2 model
-base_model = MobileNetV2(input_shape=(224, 224, 3), include_top=False, weights='imagenet')
-
-# Add custom classification layers
-model = Sequential([
-    base_model,
-    Flatten(),
-    Dense(256, activation='relu'),
-    Dense(num_classes, activation='softmax')
-])
-
-# Compile model
-model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
-```
-
-## 📌 Model 2: MediaPipe + MLP Approach
-
-- Extracted **hand landmark coordinates** using **MediaPipe Hands**.
-- Trained a **MLP model** on the extracted landmark features.
-- This method proved to be **faster and more reliable for real-time recognition**.
-
-### **Training MLP on MediaPipe Landmarks**
-
-```python
-import mediapipe as mp
-import numpy as np
-import tensorflow as tf
-
-# Load the trained MLP model
-mlp_model = tf.keras.models.load_model("asl_mediapipe_mlp_model.h5")
-
-# Initialize MediaPipe Hands
-mp_hands = mp.solutions.hands
-hands = mp_hands.Hands(min_detection_confidence=0.7, min_tracking_confidence=0.7)
-
-# Predict a sign using MediaPipe landmarks
-def predict_sign(landmarks):
-    input_data = np.array(landmarks).flatten().reshape(1, -1)
-    prediction = mlp_model.predict(input_data)
-    return np.argmax(prediction)
-```
 
 ## 🚀 Running the Sign Language Recognition System
 
