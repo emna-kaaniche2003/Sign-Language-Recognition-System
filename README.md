@@ -22,9 +22,6 @@ This project implements a high-performance **real-time sign language recognition
 - It contains **hand gesture images labeled with ASL characters**.
 - For **MLP (MediaPipe)**, we extracted **landmark keypoints** from each image and stored them in CSV format.
 
-## 📌 Model 1: MobileNetV2 Approach
-
-- However, it struggled with **real-time sign recognition**, leading us to explore **MediaPipe-based MLP**.
 
 ## 🚀 Running the Sign Language Recognition System
 
